@@ -2,6 +2,8 @@
 
 ## 📁 Directory Tree
 ⚠️ Some of this may need to be cleaned up ⚠️ 
+
+```
 .
 ├── README.md
 ├── cmd
@@ -27,7 +29,7 @@
     └── tui.go
 
 9 directories, 14 files
-
+```
 
 ## 🤔 Thoughts
 
