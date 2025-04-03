@@ -7,10 +7,16 @@ import (
 	"time"
 )
 
+const (
+	CmdMessage   = "MSG"
+	CmdFingerReq = "FINGERREQ"
+	CmdFingerRes = "FINGERRES"
+)
+
 type Message struct {
 	From    string
 	Group   string
-	Cmd     string // MSG, MAIL, FINGER, etc.
+	Cmd     string
 	Body    string
 	Created time.Time
 }
@@ -22,7 +28,7 @@ func (m Message) Encode() string {
 func Decode(line string) (Message, error) {
 	parts := strings.SplitN(line, "|", 4)
 	if len(parts) < 4 {
-		return Message{}, errors.New("invalid message")
+		return Message{}, errors.New("invalid message format")
 	}
 	return Message{
 		Cmd:     parts[0],

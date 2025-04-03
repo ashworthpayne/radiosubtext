@@ -16,3 +16,16 @@ touch README.md
 go mod init github.com/ashworthpayne/radiosubtext
 go get github.com/charmbracelet/bubbletea
 go get github.com/tarm/serial
+
+import (
+	...
+	"github.com/ashworthpayne/radiosubtext/radio"
+	"github.com/ashworthpayne/radiosubtext/proto"
+	"github.com/ashworthpayne/radiosubtext/ui"
+)
+
+import (
+	...
+	"github.com/ashworthpayne/radiosubtext/proto"
+	"github.com/ashworthpayne/radiosubtext/radio"
+)

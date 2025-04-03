@@ -4,8 +4,7 @@ import (
 	"bufio"
 	"time"
 
-	"radiosubtext/proto"
-
+	"github.com/ashworthpayne/radiosubtext/proto"
 	"github.com/tarm/serial"
 )
 
@@ -13,9 +12,13 @@ type Radio struct {
 	port *serial.Port
 }
 
-// OpenRadio connects to serial device.
+// Opens the radio's TTY interface
 func OpenRadio(dev string, baud int) (*Radio, error) {
-	c := &serial.Config{Name: dev, Baud: baud, ReadTimeout: time.Second * 1}
+	c := &serial.Config{
+		Name:        dev,
+		Baud:        baud,
+		ReadTimeout: time.Second,
+	}
 	p, err := serial.OpenPort(c)
 	if err != nil {
 		return nil, err
@@ -23,12 +26,13 @@ func OpenRadio(dev string, baud int) (*Radio, error) {
 	return &Radio{port: p}, nil
 }
 
+// Sends a structured message over RF
 func (r *Radio) Send(msg proto.Message) error {
-	raw := msg.Encode()
-	_, err := r.port.Write([]byte(raw + "\n"))
+	_, err := r.port.Write([]byte(msg.Encode() + "\n"))
 	return err
 }
 
+// Listens for incoming lines from radio and pushes to inbox
 func (r *Radio) Listen(inbox chan proto.Message) {
 	scanner := bufio.NewScanner(r.port)
 	for scanner.Scan() {

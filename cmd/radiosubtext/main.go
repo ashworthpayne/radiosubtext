@@ -1,42 +1,64 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 
+	"github.com/ashworthpayne/radiosubtext/modems"
+	"github.com/ashworthpayne/radiosubtext/modems/dstarserial"
+	"github.com/ashworthpayne/radiosubtext/modems/fake"
 	"github.com/ashworthpayne/radiosubtext/proto"
-	"github.com/ashworthpayne/radiosubtext/radio"
 	"github.com/ashworthpayne/radiosubtext/ui"
 )
 
 func main() {
-	r, err := radio.OpenRadio("/dev/ttyUSB0", 9600)
-	if err != nil {
-		fmt.Println("Error opening radio:", err)
-		os.Exit(1)
+	// CLI flags
+	port := flag.String("port", "/dev/ttyUSB0", "Serial port for D-STAR modem")
+	callsign := flag.String("callsign", "N0CALL", "Your station callsign")
+	group := flag.String("group", "@CQ", "Default group name")
+	useFake := flag.Bool("fake", false, "Use fake modem instead of serial")
+	flag.Parse()
+
+	var modem modems.Modem
+
+	if *useFake {
+		fmt.Println("🔧 Running in FAKE mode — no serial hardware required.")
+		modem = fake.New()
+	} else {
+		dstar, err := dstarserial.New(*port, 9600)
+		if err != nil {
+			fmt.Println("Error opening D-STAR modem:", err)
+			os.Exit(1)
+		}
+		modem = dstar
 	}
 
+	// Init UI
+	model := ui.NewModel(modem, *callsign, *group)
 	inbox := make(chan proto.Message)
-	m := ui.NewModel(r, "N0CALL", "@CQ")
 
-	// Incoming radio messages → UI inbox
-	go r.Listen(inbox)
+	// Connect modem → UI
+	go modem.Listen(inbox)
+
+	// Connect UI → modem
+	go func() {
+		for msg := range model.SendQueue {
+			_ = modem.Send(msg)
+		}
+	}()
+
+	// Connect inbound messages into UI
 	go func() {
 		for msg := range inbox {
-			m.Push(msg)
+			model.Push(msg)
 		}
 	}()
 
-	// Outgoing messages → radio send
-	go func() {
-		for msg := range m.SendQueue {
-			_ = r.Send(msg)
-		}
-	}()
-
-	p := tea.NewProgram(m)
+	// Launch TUI
+	p := tea.NewProgram(model)
 	if err := p.Start(); err != nil {
 		fmt.Println("TUI error:", err)
 		os.Exit(1)
