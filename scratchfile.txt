@@ -1,0 +1,18 @@
+RadioSubtext/
+mkdir cmd/
+mkdir cmd/radiosubtext/ 
+touch cmd/radiosubtext/main.go
+mkdir radio/ 
+touch radio/radio.go
+mkdir proto/
+touch proto/message.go
+touch proto/handler.go
+mkdir ui/
+touch ui/tui.go
+touch go.mod
+touch README.md
+
+
+go mod init github.com/ashworthpayne/radiosubtext
+go get github.com/charmbracelet/bubbletea
+go get github.com/tarm/serial
