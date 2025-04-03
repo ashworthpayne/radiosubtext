@@ -1,4 +1,4 @@
-# 🧠 Notes
+# 🧠 Ideas 
 
 ## 📁 Directory Tree
 ⚠️ Some of this may need to be cleaned up ⚠️ 
