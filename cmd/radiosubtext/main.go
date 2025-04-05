@@ -16,7 +16,7 @@ import (
 
 func main() {
 	// CLI flags
-	port := flag.String("port", "/dev/ttyUSB0", "Serial port for D-STAR modem")
+	port := flag.String("port", "/dev/ttyUSB1", "Serial port for D-STAR modem")
 	callsign := flag.String("callsign", "N0CALL", "Your station callsign")
 	group := flag.String("group", "@CQ", "Default group name")
 	useFake := flag.Bool("fake", false, "Use fake modem instead of serial")
