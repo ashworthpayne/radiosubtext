@@ -50,10 +50,10 @@ func main() {
 		}
 	}()
 
-	// Connect inbound messages into UI
+	// Connect inbound messages into UI's RecvQueue
 	go func() {
 		for msg := range inbox {
-			model.Push(msg)
+			model.RecvQueue <- msg
 		}
 	}()
 

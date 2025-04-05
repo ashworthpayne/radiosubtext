@@ -43,3 +43,4 @@ Nothing says I have to do any of this. I'm just thinking in markdown.
 * Change /finger and /whois to just /whois, and logically switch functions as-needed?
 * local config file with call, grid, radio, ??. Used to respond to finger commands.
 * Other ideas...
+
